@@ -12,4 +12,10 @@ public class MeshComponent : SceneComponent
         
         renderer.DrawMesh(Mesh, Transform);
     }
+
+    public void SetMaterial(Material material)
+    {
+        if(Mesh is not null)
+            Mesh.Material = material;
+    }
 }

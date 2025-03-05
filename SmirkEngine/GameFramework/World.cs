@@ -6,16 +6,21 @@ public partial class World : ITickable, IRenderable
 {
     protected readonly List<Actor> _actors = [];
     
-    public void Spawn(Actor actor)
+    public Actor Spawn(Actor actor)
     {
         _actors.Add(actor);
-        actor.World = this;
-        actor.BeginPlay();
+        actor.InvokeBeginPlay(this);
+        return actor;
+    }
+    
+    public T Spawn<T>(Actor actor) where T : Actor
+    {
+        return (T)Spawn(actor);
     }
 
-    public void Spawn<T>() where T : Actor
+    public T Spawn<T>() where T : Actor
     {
-        Spawn(Activator.CreateInstance<T>());
+        return Spawn<T>(Activator.CreateInstance<T>());
     }
     
     public void Tick(float deltaTime) => _actors.ForEach(actor => actor.Tick(deltaTime));
@@ -24,7 +29,6 @@ public partial class World : ITickable, IRenderable
     public void DestroyActor(Actor actor)
     {
         _actors.Remove(actor);
-        actor.World = null;
-        actor.EndPlay();
+        actor.InvokeEndPlay();
     }
 }

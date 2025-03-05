@@ -36,6 +36,11 @@ public class GLRenderAPI : IRenderApi
         mesh.Render(transform);
     }
 
+    public IShader CreateShader()
+    {
+        return new GLShader(_gl!);
+    }
+
     public void PresentFrame()
     {
         throw new NotImplementedException();

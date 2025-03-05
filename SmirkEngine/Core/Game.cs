@@ -1,5 +1,6 @@
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+using SmirkEngine.GameFramework;
 using SmirkEngine.Rendering;
 
 namespace SmirkEngine.Core;
@@ -9,10 +10,14 @@ public abstract class Game
     public string? Name { get; set; }
 
     protected IWindow? window;
-    protected IRenderApi? renderApi;
+    public static IRenderApi? RenderAPI;
+    
+    public World MainWorld { get; } = new();
     
     public void Run(int windowWidth, int windowHeight, IRenderApi renderApi)
     {
+        RenderAPI = renderApi;
+        
         var options = WindowOptions.Default with
         {
             Size = new Vector2D<int>(windowWidth, windowHeight),
@@ -29,7 +34,7 @@ public abstract class Game
     
     private void OnLoad_Internal()
     {
-        renderApi?.Initialize(window!);
+        RenderAPI?.Initialize(window!);
         OnLoad();
     }
 
@@ -45,7 +50,7 @@ public abstract class Game
 
     private void OnRender_Internal(double deltaTime)
     {
-        OnRender((float)deltaTime, renderApi!);
+        OnRender((float)deltaTime, RenderAPI!);
     }
 
     protected virtual void OnLoad()

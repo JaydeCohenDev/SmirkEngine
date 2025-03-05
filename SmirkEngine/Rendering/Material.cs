@@ -2,9 +2,9 @@ namespace SmirkEngine.Rendering;
 
 public class Material
 {
-    public IShader Shader { get; init; }
+    public Shader Shader { get; init; }
 
-    public Material(IShader shader)
+    public Material(Shader shader)
     {
         Shader = shader;
     }
