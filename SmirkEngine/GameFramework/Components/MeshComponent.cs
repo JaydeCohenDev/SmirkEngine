@@ -13,9 +13,17 @@ public class MeshComponent : SceneComponent
         renderer.DrawMesh(Mesh, Transform);
     }
 
+    public void SetMesh(IMesh mesh)
+    {
+        Mesh = mesh;
+    }
+    
     public void SetMaterial(Material material)
     {
-        if(Mesh is not null)
+        if (Mesh != null)
+        {
             Mesh.Material = material;
+        }
     }
+    public Material? GetMaterial => Mesh?.Material;
 }

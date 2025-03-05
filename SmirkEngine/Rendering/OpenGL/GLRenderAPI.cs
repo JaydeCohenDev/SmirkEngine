@@ -41,6 +41,11 @@ public class GLRenderAPI : IRenderApi
         return new GLShader(_gl!);
     }
 
+    public IMesh CreateMesh()
+    {
+        return new GLMesh(_gl!);
+    }
+
     public void PresentFrame()
     {
         throw new NotImplementedException();

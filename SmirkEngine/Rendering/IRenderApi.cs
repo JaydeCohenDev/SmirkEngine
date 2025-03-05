@@ -11,6 +11,7 @@ public interface IRenderApi
     void SetViewport(uint width, uint height);
     void DrawMesh(IMesh mesh, Transform transform);
     IShader CreateShader();
+    IMesh CreateMesh();
     void PresentFrame();
     void Shutdown();
 }

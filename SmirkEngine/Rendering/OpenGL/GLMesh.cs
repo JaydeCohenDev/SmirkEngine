@@ -55,4 +55,8 @@ public class GLMesh : IMesh
         Material.Unbind();
     }
 
+    public bool LoadFromFile(string path)
+    {
+        throw new NotImplementedException();
+    }
 }
