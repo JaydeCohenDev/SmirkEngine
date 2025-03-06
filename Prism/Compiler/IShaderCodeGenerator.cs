@@ -19,16 +19,7 @@ public abstract class ShaderCodeGeneratorBase : IShaderCodeGenerator
 
     protected string MapType(Type type)
     {
-        var typeMap = GetTypeMap();
-        if(type == typeof(Float)) return typeMap.MapFloat();
-        if(type == typeof(Vec2)) return typeMap.MapVec2();
-        if(type == typeof(Vec3)) return typeMap.MapVec3();
-        if(type == typeof(Vec4)) return typeMap.MapVec4();
-        if(type == typeof(Mat3)) return typeMap.MapMat3();
-        if(type == typeof(Mat4)) return typeMap.MapMat4();
-        if (type == typeof(void)) return "void";
-        
-        throw new Exception($"Unhandled type {type.Name}");
+        return type == typeof(void) ? "void" : GetTypeMap().Map(type);
     }
     
     protected abstract void AppendVariableDeclarations(StringBuilder shaderCode, ShaderVariables variables);

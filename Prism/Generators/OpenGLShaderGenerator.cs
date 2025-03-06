@@ -15,16 +15,28 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
 {
     public class OpenGLShaderTypeMap : ShaderTypeMap
     {
-        public override string MapVec2() => "vec2";
-        public override string MapVec3() => "vec3";
-        public override string MapVec4() => "vec4";
-        public override string MapFloat() => "float";
-        public override string MapMat3() => "mat3";
-        public override string MapMat4() => "mat4";
+        public override string Map(Type type) => MapTypeString(type.Name);
+        public override string MapTypeString(string typeString) => typeString switch
+        {
+            "Vec2" => "vec2",
+            "Vec3" => "vec3",
+            "Vec4" => "vec4",
+            "Float" => "float",
+            "Mat3" => "mat3",
+            "Mat4" => "mat4",
+            _ => typeString
+    };
     }
 
     public class OpenGLShaderExpressionVisitor : ShaderExpressionVisitor
     {
+        protected OpenGLShaderTypeMap _typeMap;
+        
+        public OpenGLShaderExpressionVisitor(OpenGLShaderTypeMap typeMap)
+        {
+            _typeMap = typeMap;
+        }
+        
         public override string? Visit(SyntaxNode? node)
         {
             if(node == null) return string.Empty;
@@ -64,16 +76,12 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
 
         public override string? VisitIdentifierName(IdentifierNameSyntax node)
         {
+            
             // Replace the content while maintaining leading/trailing trivia
             var newText = node.Identifier.Text switch
             {
-                "Vec2" => "vec2",
-                "Vec3" => "vec3",
-                "Vec4" => "vec4",
-                "Mat3" => "mat3",
-                "Mat4" => "mat4",
                 "VertexPosition" => "gl_Position",
-                _ => node.Identifier.Text
+                _ => _typeMap.MapTypeString(node.Identifier.Text)
             };
 
             // Apply the formatting (leading and trailing trivia) back to the modified text
@@ -92,7 +100,7 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
     public OpenGLShaderGenerator()
     {
         _typeMap = new OpenGLShaderTypeMap();
-        _expressionVisitor = new OpenGLShaderExpressionVisitor();
+        _expressionVisitor = new OpenGLShaderExpressionVisitor(_typeMap);
     }
     
     public override string GenerateShaderCode(Type shaderType, ShaderVariables variables)
@@ -173,7 +181,7 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
     private string NormalizeIndentation(string code)
     {
         // Split the code into lines
-        var lines = code.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        var lines = code.Split(new []{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
 
         // Find the minimum indentation (ignoring empty lines)
         var minIndent = lines
