@@ -4,7 +4,7 @@ namespace SmirkEngine.GameFramework.Components;
 
 public class MeshComponent : SceneComponent
 {
-    public IMesh? Mesh { get; set; }
+    public IMeshSection? Mesh { get; set; }
     
     public override void Render(float deltaTime, IRenderApi renderer)
     {
@@ -13,9 +13,9 @@ public class MeshComponent : SceneComponent
         renderer.DrawMesh(Mesh, Transform);
     }
 
-    public void SetMesh(IMesh mesh)
+    public void SetMesh(IMeshSection meshSection)
     {
-        Mesh = mesh;
+        Mesh = meshSection;
     }
     
     public void SetMaterial(Material material)

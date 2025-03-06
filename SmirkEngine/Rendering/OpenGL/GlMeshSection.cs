@@ -1,18 +1,19 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Silk.NET.OpenGL;
+using SmirkEngine.AssetHandling;
 using SmirkEngine.Core;
 
 namespace SmirkEngine.Rendering.OpenGL;
 
-public class GLMesh : IMesh
+public class GlMeshSection : IMeshSection
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct GLMeshVertex
+    public struct GLMeshVertex : IMeshVertex
     {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Vector2 TexCoord;
+        public Vector3 Position { get; set; }
+        public Vector3 Normal { get; set; }
+        public Vector2 TexCoord { get; set; }
     }
     
     public Material Material { get; set; }
@@ -25,7 +26,7 @@ public class GLMesh : IMesh
     private List<GLMeshVertex> _vertices = [];
     private List<uint> _indices = [];
     
-    public GLMesh(GL gl)
+    public GlMeshSection(GL gl)
     {
         _gl = gl;
         
@@ -55,8 +56,18 @@ public class GLMesh : IMesh
         Material.Unbind();
     }
 
-    public bool LoadFromFile(string path)
+    public void SetVertices(List<IMeshVertex> vertices)
     {
-        throw new NotImplementedException();
+        _vertices = vertices.Cast<GLMeshVertex>().ToList();
+    }
+
+    public void SetIndices(List<uint> indices)
+    {
+        _indices = indices;
+    }
+
+    public IMeshVertex CreateVertex()
+    {
+        return new GLMeshVertex();
     }
 }

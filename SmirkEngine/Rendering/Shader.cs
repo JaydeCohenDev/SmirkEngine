@@ -10,13 +10,7 @@ public class Shader : IShader, IAsset
     
     public bool LoadFromFile(string path)
     {
-        if (Game.RenderAPI is null)
-        {
-            throw new Exception("Cannot create new shader, render API is null");
-            return false;
-        }
-        
-        _shader = Game.RenderAPI.CreateShader();
+        _shader = Game.GetRenderApi()!.CreateShader();
         _shader.LoadFromFile(path);
         return true;
     }

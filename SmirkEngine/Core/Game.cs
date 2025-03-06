@@ -10,7 +10,14 @@ public abstract class Game
     public string? Name { get; set; }
 
     protected IWindow? window;
-    public static IRenderApi? RenderAPI;
+    private static IRenderApi? RenderAPI;
+
+    public static IRenderApi GetRenderApi()
+    {
+        if(RenderAPI == null)
+            throw new Exception("RenderAPI is null");
+        return RenderAPI;
+    }
     
     public World MainWorld { get; } = new();
     

@@ -31,9 +31,9 @@ public class GLRenderAPI : IRenderApi
         _gl?.Viewport(0, 0, width, height);
     }
 
-    public void DrawMesh(IMesh mesh, Transform transform)
+    public void DrawMesh(IMeshSection meshSection, Transform transform)
     {
-        mesh.Render(transform);
+        meshSection.Render(transform);
     }
 
     public IShader CreateShader()
@@ -41,9 +41,9 @@ public class GLRenderAPI : IRenderApi
         return new GLShader(_gl!);
     }
 
-    public IMesh CreateMesh()
+    public IMeshSection CreateMesh()
     {
-        return new GLMesh(_gl!);
+        return new GlMeshSection(_gl!);
     }
 
     public void PresentFrame()

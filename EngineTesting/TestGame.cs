@@ -10,6 +10,8 @@ public class TestGame : Game
 {
     protected override void OnLoad()
     {
+        var model = Asset.Load<Mesh>("res/Building_Residence.fbx");
+        
         var shader = Asset.Load<Shader>("res/shaders/default.glsl");
         var material = new Material(shader);
 

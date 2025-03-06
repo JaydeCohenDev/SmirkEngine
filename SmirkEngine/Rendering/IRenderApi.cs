@@ -9,9 +9,9 @@ public interface IRenderApi
     void Initialize(IWindow window);
     void ClearScreen(Color color);
     void SetViewport(uint width, uint height);
-    void DrawMesh(IMesh mesh, Transform transform);
+    void DrawMesh(IMeshSection meshSection, Transform transform);
     IShader CreateShader();
-    IMesh CreateMesh();
+    IMeshSection CreateMesh();
     void PresentFrame();
     void Shutdown();
 }
