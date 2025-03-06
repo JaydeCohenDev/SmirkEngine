@@ -25,7 +25,105 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
 
     public class OpenGLShaderExpressionVisitor : ShaderExpressionVisitor
     {
+        protected virtual string ConvertFunctionCall(string methodName, string arguments)
+        {
+            return $"{methodName}({arguments})";
+        }
+
+        protected virtual string ConvertOperator(SyntaxToken operatorToken)
+        {
+            return operatorToken.Kind() switch
+            {
+                SyntaxKind.PlusToken => "+",
+                SyntaxKind.MinusToken => "-",
+                SyntaxKind.AsteriskToken => "*",
+                SyntaxKind.SlashToken => "/",
+                SyntaxKind.PlusEqualsToken => "+=",
+                SyntaxKind.MinusEqualsToken => "-=",
+                SyntaxKind.AsteriskEqualsToken => "*=",
+                SyntaxKind.SlashEqualsToken => "/=",
+                SyntaxKind.EqualsToken => "=",
+                _ => operatorToken.ToString()
+            };
+        }
+
+        public override string? VisitBinaryExpression(BinaryExpressionSyntax node)
+        {
+            bool needsParentheses = false;//node.Left is BinaryExpressionSyntax || node.Right is BinaryExpressionSyntax;
+            
+            string left = Visit(node.Left);
+            string right = Visit(node.Right);
+            string op = ConvertOperator(node.OperatorToken);
+            
+            return needsParentheses ? $"({left} {op} {right})" : $"{left} {op} {right}";
+        }
+
+        public override string? VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+        {
+            return $"({Visit(node.Expression)})";
+        }
+
+        public override string? VisitLiteralExpression(LiteralExpressionSyntax node)
+        {
+            return node.ToString();
+        }
+
+        public override string? VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            return node.Identifier.Text;
+        }
+
+        public override string? VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            string methodName = ((IdentifierNameSyntax)node.Expression).Identifier.Text;
+            string arguments = string.Join(", ", node.ArgumentList.Arguments.Select(a => Visit(a.Expression)));
+            return ConvertFunctionCall(methodName, arguments);
+        }
+
+        public override string? VisitAssignmentExpression(AssignmentExpressionSyntax node)
+        {
+            string left = Visit(node.Left);
+            string right = Visit(node.Right);
+            string op = ConvertOperator(node.OperatorToken);
+            return $"{left} {op} {right}";
+        }
+    }
+
+    public class BlankExpressionVisitor : ShaderExpressionVisitor
+    {
+        public override string? Visit(SyntaxNode? node)
+        {
+            if(node == null) return string.Empty;
+
+            var result = new StringBuilder();
+
+            // Traverse all child nodes and tokens in the correct order
+            foreach (var item in node.ChildNodesAndTokens())
+            {
+                if (item.IsNode)
+                {
+                    // Recursively process child nodes
+                    result.Append(Visit(item.AsNode()));
+                }
+                else if (item.IsToken)
+                {
+                    
+                    // Include leading trivia (e.g., spaces, comments, newlines)
+                    result.Append(item.AsToken().LeadingTrivia.ToFullString());
+
+                    // Append the token itself
+                    result.Append(item.AsToken().ToString());
+
+                    // Include trailing trivia
+                    result.Append(item.AsToken().TrailingTrivia.ToFullString());
+                }
+            }
+
+            return result.ToString();
+        }
         
+        
+
     }
     
     private OpenGLShaderTypeMap _typeMap;
@@ -34,7 +132,7 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
     public OpenGLShaderGenerator()
     {
         _typeMap = new OpenGLShaderTypeMap();
-        _expressionVisitor = new OpenGLShaderExpressionVisitor();
+        _expressionVisitor = new BlankExpressionVisitor();
     }
     
     public override string GenerateShaderCode(Type shaderType, ShaderVariables variables)
@@ -89,7 +187,7 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
         }
         
         var outputs = variables.Outputs;
-        if (outputs.Count >= 0)
+        if (outputs.Count > 0)
         {
             shaderCode.AppendLine("//Outputs");
             foreach (var variable in outputs)
@@ -110,22 +208,35 @@ public class OpenGLShaderGenerator : ShaderCodeGeneratorBase
 
     protected override void AppendFunctionBody(StringBuilder shaderCode, MethodDeclarationSyntax methodBody)
     {
-        shaderCode.AppendLine("{");
-
-        foreach (var statement in methodBody.Body.Statements)
-        {
-            shaderCode.AppendLine(HandleStatement(statement));
-        }
-        
-        shaderCode.AppendLine("}");
+        var visitedBody = _expressionVisitor.Visit(methodBody.Body);
+        var normalizedBody = NormalizeIndentation(visitedBody);
+        shaderCode.AppendLine(normalizedBody);
     }
+    
+    private string NormalizeIndentation(string code)
+    {
+        // Split the code into lines
+        var lines = code.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+
+        // Find the minimum indentation (ignoring empty lines)
+        var minIndent = lines
+            .Where(line => !string.IsNullOrWhiteSpace(line)) // Ignore blank lines
+            .Select(line => line.TakeWhile(char.IsWhiteSpace).Count()) // Count leading spaces
+            .DefaultIfEmpty(0) // Default to 0 if no lines are found
+            .Min();
+
+        // Trim the base indentation from each line
+        return string.Join(Environment.NewLine, lines.Select(line =>
+            line.Length >= minIndent ? line[minIndent..] : line.TrimStart()));
+    }
+
 
     private string HandleStatement(StatementSyntax statement)
     {
         return statement switch
         {
-            ExpressionStatementSyntax exprStatement => _expressionVisitor.Visit(exprStatement.Expression),
-            ReturnStatementSyntax returnStatement => $"return {_expressionVisitor.Visit(returnStatement.Expression)}",
+            ExpressionStatementSyntax exprStatement => _expressionVisitor.Visit(exprStatement.Expression) + ";",
+            ReturnStatementSyntax returnStatement => $"return {_expressionVisitor.Visit(returnStatement.Expression)};",
             IfStatementSyntax ifStatement => HandleIfStatement(ifStatement),
             ForStatementSyntax forStatement => HandleForStatement(forStatement),
             WhileStatementSyntax whileStatement => HandleWhileStatement(whileStatement),
