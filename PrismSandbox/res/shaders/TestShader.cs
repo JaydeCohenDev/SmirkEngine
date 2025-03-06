@@ -16,8 +16,7 @@ public class TestShader : PrismShader
 
         [ShaderOutput] Vec2 FragTexCoord;
 
-        [ShaderEntry]
-        void main()
+        protected override void main()
         {
             VertexPosition = (projection * view * model) * aPos;
             FragTexCoord = aTexCoord;
@@ -28,8 +27,7 @@ public class TestShader : PrismShader
     {
         [ShaderInput] Vec2 FragTexCoord;
 
-        [ShaderEntry]
-        void main()
+        protected override void main()
         {
             Vec3 color = Vec3(FragTexCoord.X, FragTexCoord.Y, 0.5);
             FragmentColor = Vec4(color.X, color.Y, color.Z, 1.0);

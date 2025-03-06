@@ -10,11 +10,15 @@ public abstract class PrismShader
     protected abstract class VertexShader : ISubShader
     {
         protected Vec3 VertexPosition;
+
+        protected abstract void main();
     }
 
     protected abstract class FragmentShader : ISubShader
     {
         protected Vec4 FragmentColor;
+        
+        protected abstract void main();
     }
 
     protected static Vec2 Vec2(Float x, Float y)
