@@ -49,6 +49,7 @@ public class InputAction
 
     public InputAction WithTrigger(InputTrigger trigger)
     {
+        trigger.Setup(Input.InputContext!);
         _triggers.Add(trigger);
         trigger.OnTriggered += () =>
         {
@@ -97,11 +98,5 @@ public class InputAction
     public bool HasTrigger<T>(MouseButton button) where T : InputTrigger
     {
         return _triggers.Any(t => t is T);
-    }
-
-    public void BindTriggers(IInputContext inputContext)
-    {
-        foreach (var trigger in _triggers)
-            trigger.Setup(inputContext);
     }
 }

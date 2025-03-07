@@ -9,10 +9,7 @@ public static class Output
         Error,
     }
     
-    private static void Log(LogLevel level, string message,
-        [System.Runtime.CompilerServices.CallerFilePath] string file = "",
-        [System.Runtime.CompilerServices.CallerMemberName] string member = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int line = 0)
+    private static void Log(LogLevel level, string message, string file, string member, int line)
     {
         Console.ForegroundColor = level switch
         {
@@ -21,22 +18,33 @@ public static class Output
             LogLevel.Error => ConsoleColor.Red,
             _ => ConsoleColor.White,
         };
-        System.Console.WriteLine($"{level}: {message} (File: {file}, Function: {member}, Line: {line})");
+        var fileName = Path.GetFileNameWithoutExtension(file);
+        var callerId = $"{fileName}:{member}:{line}";
+        System.Console.WriteLine($"[{callerId}] [{level}] {message}");
         Console.ResetColor();
     }
 
-    public static void Log(string message)
+    public static void Log(string message, 
+        [System.Runtime.CompilerServices.CallerFilePath] string file = "",
+        [System.Runtime.CompilerServices.CallerMemberName] string member = "",
+        [System.Runtime.CompilerServices.CallerLineNumber] int line = 0)
     {
-        Log(LogLevel.Info, message);
+        Log(LogLevel.Info, message, file, member, line);
     }
 
-    public static void LogWarning(string message)
+    public static void LogWarning(string message, 
+        [System.Runtime.CompilerServices.CallerFilePath] string file = "",
+        [System.Runtime.CompilerServices.CallerMemberName] string member = "",
+        [System.Runtime.CompilerServices.CallerLineNumber] int line = 0)
     {
-        Log(LogLevel.Warning, message);
+        Log(LogLevel.Warning, message, file, member, line);
     }
 
-    public static void LogError(string message)
+    public static void LogError(string message, 
+        [System.Runtime.CompilerServices.CallerFilePath] string file = "",
+        [System.Runtime.CompilerServices.CallerMemberName] string member = "",
+        [System.Runtime.CompilerServices.CallerLineNumber] int line = 0)
     {
-        Log(LogLevel.Error, message);
+        Log(LogLevel.Error, message, file, member, line);
     }
 }

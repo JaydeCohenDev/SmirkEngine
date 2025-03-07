@@ -6,16 +6,11 @@ namespace SmirkEngine;
 
 public static class Input
 {
-    private static IInputContext? _inputContext;
+    public static IInputContext? InputContext { get; private set; }
     
     public static void Initialize(IInputContext inputContext)
     {
-        _inputContext = inputContext;
-        
-        InputAction.RegisteredActions.ForEach(action =>
-        {
-            action.BindTriggers(_inputContext);
-        });
+        InputContext = inputContext;
     }
     
     public static void BindInputFunctions(object target) =>
@@ -26,7 +21,7 @@ public static class Input
 
     private static void BindInputActionFunctions(object target)
     {
-        var inputActionMethods = target.GetType().GetMethods()
+        var inputActionMethods = target.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Where(m => m.GetCustomAttribute<InputActionAttribute>() != null);
 
         foreach (var method in inputActionMethods)
@@ -34,9 +29,9 @@ public static class Input
             var inputAction = InputAction.Get(method.Name);
             if (inputAction is null)
                 Output.LogWarning($"InputAction {method.Name} not found");
-                    
-            inputAction?.AddCallback(target, args =>
-                (InputCallbackConsumeType)method.Invoke(target, [args])!);
+
+            var callback = (InputActionCallbackDelegate)method.CreateDelegate(typeof(InputActionCallbackDelegate), target);
+            inputAction?.AddCallback(target, callback);
         }
     }
 }

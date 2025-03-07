@@ -23,6 +23,7 @@ public partial class World
         {
             World = world;
             hasBegunPlay = true;
+            Input.BindInputFunctions(this);
             BeginPlay();
         }
 
