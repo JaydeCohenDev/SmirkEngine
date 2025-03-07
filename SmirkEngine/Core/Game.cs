@@ -44,6 +44,7 @@ public abstract class Game
     {
         Input.Initialize(window!.CreateInput());
         RenderAPI?.Initialize(window!);
+        OnSetupInput();
         OnLoad();
     }
 
@@ -62,18 +63,11 @@ public abstract class Game
         OnRender((float)deltaTime, RenderAPI!);
     }
 
-    protected virtual void OnLoad()
-    {
-        
-    }
+    protected virtual void OnSetupInput() {}
 
-    protected virtual void OnTick(float deltaTime)
-    {
-        
-    }
+    protected virtual void OnLoad() {}
 
-    protected virtual void OnRender(float deltaTime, IRenderApi renderer)
-    {
-        
-    }
+    protected virtual void OnTick(float deltaTime) {}
+
+    protected virtual void OnRender(float deltaTime, IRenderApi renderer) {}
 }
