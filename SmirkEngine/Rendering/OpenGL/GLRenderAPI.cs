@@ -41,6 +41,11 @@ public class GLRenderAPI : IRenderApi
         return new GLShader(_gl!);
     }
 
+    public ITexture CreateTexture()
+    {
+        return new GLTexture(_gl!);
+    }
+
     public IMeshSection CreateMesh()
     {
         return new GlMeshSection(_gl!);

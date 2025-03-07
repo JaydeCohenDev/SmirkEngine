@@ -5,6 +5,11 @@ public interface IValidationMessage {}
 public abstract class ValidationMessage(string message) : IValidationMessage
 {
     public string Message { get; } = message;
+
+    public override string ToString()
+    {
+        return Message;
+    }
 }
 
 public class ValidationError(string message) : ValidationMessage(message) {}
