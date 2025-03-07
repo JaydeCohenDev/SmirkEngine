@@ -1,6 +1,6 @@
-using SmirkEngine.GameFramework.Components;
+using SmirkEngine.Components;
 
-namespace SmirkEngine.GameFramework.Actors;
+namespace SmirkEngine.Actors;
 
 public class MeshActor : World.Actor
 {

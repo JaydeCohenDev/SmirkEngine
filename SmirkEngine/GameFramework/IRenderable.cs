@@ -1,6 +1,6 @@
 using SmirkEngine.Rendering;
 
-namespace SmirkEngine.GameFramework;
+namespace SmirkEngine;
 
 public interface IRenderable
 {

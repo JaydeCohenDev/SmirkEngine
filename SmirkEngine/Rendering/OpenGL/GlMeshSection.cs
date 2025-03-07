@@ -50,7 +50,7 @@ public class GlMeshSection : IMeshSection
         Material.Bind();
         _vao.Bind();
         
-        _gl.DrawElements(PrimitiveType.Triangles, (uint)_indices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+        _gl.DrawElements(PrimitiveType.Triangles, (uint)_indices.Count, DrawElementsType.UnsignedInt, in IntPtr.Zero);
         
         _vao.Unbind();
         Material.Unbind();

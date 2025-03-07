@@ -1,7 +1,7 @@
 using SmirkEngine.Core;
 using SmirkEngine.Rendering;
 
-namespace SmirkEngine.GameFramework;
+namespace SmirkEngine;
 
 public partial class World
 {

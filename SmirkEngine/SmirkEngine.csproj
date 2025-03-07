@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
       <PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
       <PackageReference Include="Silk.NET.Input" Version="2.22.0" />
       <PackageReference Include="Silk.NET.OpenGL" Version="2.22.0" />

@@ -1,6 +1,6 @@
 using SmirkEngine.Rendering;
 
-namespace SmirkEngine.GameFramework.Components;
+namespace SmirkEngine.Components;
 
 public class MeshComponent : SceneComponent
 {

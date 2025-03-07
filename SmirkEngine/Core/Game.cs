@@ -1,6 +1,7 @@
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
-using SmirkEngine.GameFramework;
+using SmirkEngine;
 using SmirkEngine.Rendering;
 
 namespace SmirkEngine.Core;
@@ -41,6 +42,7 @@ public abstract class Game
     
     private void OnLoad_Internal()
     {
+        Input.Initialize(window!.CreateInput());
         RenderAPI?.Initialize(window!);
         OnLoad();
     }

@@ -1,4 +1,4 @@
-namespace SmirkEngine.GameFramework;
+namespace SmirkEngine;
 
 public interface ITickable
 {
